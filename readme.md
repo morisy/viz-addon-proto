@@ -48,6 +48,39 @@ This code will create a dismissible prompt that hovers over the page, showing a 
 
 Below are some examples of how to use the methods provided by the `DocumentCloudAPI` wrapper.
 
+### Generate Embed Code
+
+Generate an embed code for a document, single page, or individual note using the oEmbed service.
+
+```
+generateEmbedCode(url, maxwidth, maxheight)
+```
+
+### Parameters
+
+| **Parameter** | **Type** | **Options** | **Description** |
+|---|---|---|---|
+| url | URL | Required | The URL for the document to get an embed code for |
+| maxwidth | Integer |  | The maximum width of the embedded resource |
+| maxheight | Integer |  | The maximum height of the embedded resource |
+
+#### Usage
+
+```
+const embedCode = await api.generateEmbedCode("https://www.documentcloud.org/documents/123-example-document", 600, 800);
+console.log(embedCode);
+```
+
+#### Response
+
+{
+  "type": "rich",
+  "version": "1.0",
+  "html": "<iframe ... ></iframe>",
+  "width": 600,
+  "height": 800
+}
+
 ### Check Users Projects
 
 ```
