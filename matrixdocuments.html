@@ -1,0 +1,137 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>DocumentCloud Floating Matrix</title>
+  <meta name="description" content="Floating Matrix of Recently Uploaded Documents">
+  <meta name="author" content="Mitchell Kotler">
+
+  <style>
+    body {
+  background-color: black;
+}
+        @keyframes floatDown {
+        0% { transform: translateY(-150%); }
+        100% { transform: translateY(150%); }
+        }
+
+
+    .matrix {
+      position: relative;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+    }
+
+    .document {
+      position: absolute;
+      animation-name: floatDown;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="matrix" id="matrix"></div>
+  <p id="errorMessage" style="color: red;"></p>
+  <script>
+    const config = {
+      numDocuments: 10,
+      animationBaseDuration: 10,
+      animationDurationVariation: 5,
+    };
+
+    const userUrl = "https://api.www.documentcloud.org/api/users/me/";
+
+    function showError(message) {
+      const errorMessageElement = document.getElementById("errorMessage");
+      errorMessageElement.textContent = message;
+    }
+
+    function createDocumentElement(embedHtml) {
+      const div = document.createElement("div");
+      div.innerHTML = embedHtml.trim();
+      return div.firstChild;
+    }
+
+    fetch(userUrl, { credentials: "include" })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Failed to authenticate");
+        }
+      })
+
+      .then((data) => {
+        const searchUrl = "https://api.www.documentcloud.org/api/documents/search?q=*:*&order_by=created_at";
+
+        fetch(searchUrl, { credentials: "include" })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Failed to fetch documents");
+            }
+          })
+      .then((data) => {
+            console.log("Response data:", data);
+            const documents = data.results;
+
+            if (documents.length === 0) {
+              showError("No documents found.");
+              return;
+            }
+
+            const matrixElement = document.getElementById("matrix");
+            const numDocuments = Math.min(config.numDocuments, documents.length);
+
+            for (let i = 0; i < numDocuments; i++) {
+                const document = documents[i];
+                const documentId = document.id;
+                const documentSlug = document.slug;
+
+                const embedUrl = `https://www.documentcloud.org/documents/${documentId}-${documentSlug}`;
+                const oembedUrl = `https://api.www.documentcloud.org/api/oembed?url=${encodeURIComponent(embedUrl)}&maxwidth=200&maxheight=300`;
+
+                (async () => {
+                    const response = await fetch(oembedUrl, { credentials: "include" });
+
+                    if (response.ok) {
+                    const data = await response.json();
+                    const embedHtml = data.html;
+
+                    const documentElement = createDocumentElement(embedHtml);
+                    documentElement.className = "document";
+                    documentElement.style.left = `${Math.random() * 100}vw`;
+                    const scale = 0.5 + Math.random() * 1.5; // Random scale between 0.5 and 2
+                    documentElement.style.transform = `scale(${scale})`;
+
+                    documentElement.style.animationDuration = `${config.animationBaseDuration + i % config.animationDurationVariation}s`;
+                    documentElement.style.animationDelay = `${i % config.animationDurationVariation}s`;
+
+                    matrixElement.appendChild(documentElement);
+                    } else {
+                    throw new Error("Failed to fetch oEmbed data");
+                    }
+                })().catch((error) => {
+                    showError(error.message);
+                });
+                }
+          })
+          .catch((error) => {
+            showError(error.message);
+          });
+      })
+      .catch((error) => {
+        showError(error.message);
+      });
+  </script>
+</body>
+</html>

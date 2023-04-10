@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document Review App</title>
+  <!-- Include the DocumentCloud API script -->
+  <script src="documentcloud-api.js" type="module"></script>
+  <script src="reviewApp.js" type="module"></script>
+  <style>
+    .container {
+      display: flex;
+    }
+  
+    .document-view {
+      flex: 1;
+      margin-right: 20px;
+    }
+  
+    .control-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 300px;
+    }
+  
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      text-align: center;
+    }
+  
+    button:hover {
+      background-color: #0056b3;
+    }
+  
+    button:focus {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="prompt" style="display: none; position: fixed; top: 20px; right: 20px; padding: 10px; background-color: #f2dede; border: 1px solid #ebccd1; border-radius: 5px;">
+    <span id="prompt-text"></span>
+    <button id="prompt-dismiss" style="margin-left: 10px;">Dismiss</button>
+  </div>
+  <div id="app">
+    <!-- Your app content and elements go here -->
+  </div>
+  
+  <!-- Include the reviewApp script -->
+    <div id="document-container"></div>
+
+
+<div class="container">
+    <!-- Wrap the embedded document in a div -->
+    <div class="document-view">
+        <iframe id="documentViewer" frameborder="0" width="100%" height="800"></iframe>
+
+    </div>
+  
+    <!-- Wrap the buttons and information in another div -->
+    <div class="control-panel">
+      <!-- Add a div for explanatory text and the count of documents -->
+      <div class="info-text">
+        <p>This document was automatically flagged as containing potentially sensitive information. Please review and see if that's accurate, clicking the appropriate button. To review the material, click on the ☰ button in the viewer and click through the notes.</p>
+        <ul id="notes-list"></ul>
+        <p><a href="https://www.documentcloud.org/app?q=project%3A211312%20">All Flagged Documents</a></p>
+        <p><a href="https://www.documentcloud.org/app?q=project%3A212657">Non-Sensitive Documents</a>: <span id="nonSensitiveCount">0</span></p>
+        <p><a href="https://www.documentcloud.org/app?q=project%3A212658">Sensitive Documents</a>: <span id="sensitiveCount">0</span></p>
+        <p>False Positive Rate: <span id="falsePositiveRate">0</span></p>
+      </div>
+  
+      <button id="markAsSensitive">Mark as Sensitive</button>
+      <button id="markAsNonSensitive">Mark as Non-Sensitive</button>
+      <button id="skip">Skip</button>
+    </div>
+  </div>
+  <script type="module">
+    import { main } from './reviewApp.js';
+    document.addEventListener("DOMContentLoaded", main);
+  </script>
+</body>
+</html>
