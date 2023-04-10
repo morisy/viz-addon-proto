@@ -19,6 +19,31 @@ const api = new DocumentCloudAPI();
 
 Make sure the user is logged in to DocumentCloud.org before using the API.
 
+## Authenticating Users
+
+To create a dismissible prompt that hovers over the page, based on the user's state, include the following HTML inside the `<body>` tag:
+
+```
+<div id="prompt" style="display: none; position: fixed; top: 20px; right: 20px; padding: 10px; background-color: #f2dede; border: 1px solid #ebccd1; border-radius: 5px;">
+  <span id="prompt-text"></span>
+  <button id="prompt-dismiss" style="margin-left: 10px;">Dismiss</button>
+</div>
+```
+
+Inside your projects JavaScript file, import the `showPrompt` function and call it:
+
+```
+import DocumentCloudAPI, { showPrompt } from './documentcloud-api.js';
+
+const api = new DocumentCloudAPI();
+
+// Call the function to show the prompt
+showPrompt(api);
+```
+
+This code will create a dismissible prompt that hovers over the page, showing a message based on the user's state. If the user is not logged in, it prompts them to either log in or create an account. If the user is logged in, it displays the user's username and associated organization. Both prompts are dismissible by clicking the "Dismiss" button.
+
+
 ## Methods
 
 Below are some examples of how to use the methods provided by the `DocumentCloudAPI` wrapper.
