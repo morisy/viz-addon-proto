@@ -436,3 +436,23 @@ async getProjects(searchParams = {}) {
 }
 
 export default DocumentCloudAPI;
+
+export async function showPrompt(api) {
+  const isLoggedIn = await api.isLoggedIn();
+  const promptElement = document.getElementById('prompt');
+  const promptTextElement = document.getElementById('prompt-text');
+
+  if (isLoggedIn) {
+    const user = await api.fetchUser("me");
+    const organization = user.organization_name;
+    promptTextElement.innerHTML = `Logged in as ${user.username} (${organization}).`;
+  } else {
+    promptTextElement.innerHTML = `Please <a href="https://accounts.muckrock.com/accounts/login/?next=documentcloud.org?intent=documentcloud" target="_blank">log in</a> or <a href="https://accounts.muckrock.com/accounts/signup/?intent=documentcloud" target="_blank">create an account</a>.`;
+  }
+
+  promptElement.style.display = 'block';
+
+  document.getElementById('prompt-dismiss').addEventListener('click', () => {
+    document.getElementById('prompt').style.display = 'none';
+  });
+}
